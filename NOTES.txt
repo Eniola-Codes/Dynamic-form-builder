@@ -1,0 +1,87 @@
+APPROACH & TRADE-OFFS
+
+APPROACH
+
+Architecture
+1. Composable based architecture: Separated business logic into reusable composables
+  - useFormState: Manages form data, errors, and touched fields
+  - useFormValidation: Handles all validation rules
+  - useConditionalLogic: Manages conditional field visibility and requirements
+2. Component structure: 
+  - FormBuilder.vue: Coordinates form logic and updates
+  - FormField.vue: Renders individual field types and handles field-specific logic
+3. TypeScript: Used for type safety in composables and type definitions
+
+State Management
+- Vue 3 Composition API with reactive refs
+- Centralized state in useFormState composable
+- Tracks touched fields to control error display timing
+- Validation on blur (not while typing) for better UX
+
+Validation Strategy
+- Validates on field blur and form submit
+- Touched fields re-validate as user types (to clear errors immediately)
+- Supports: required, pattern, minLength, date constraints (minAge), custom error messages
+
+Conditional Logic
+- Handles both x-required_if and if-then-else patterns
+- Fields dynamically show/hide based on conditions
+- Dependent fields reset when parent changes
+
+TRADE-OFFS
+
+1. File Upload Handling
+Decision: Store filename rather than uploading to server
+
+Rationale: No backend API available. In production, would upload to storage service and store URL.
+
+Trade-off: Form accepts file selections but doesn't handle actual uploads.
+
+2. Validation Timing
+Decision: Validate on blur and submit (not while typing)
+
+Rationale: Provides immediate feedback without being aggressive. Users see errors after interacting, not during typing.
+
+Trade-off: Some users might prefer submit-only validation, but blur provides better UX.
+
+3. Conditional Logic Complexity
+Decision: Implement both x-required_if and if-then-else logic
+
+Rationale: Schema uses both patterns. if-then-else handles complex scenarios elegantly.
+
+Trade-off: More complex code, but handles all schema requirements comprehensively.
+
+4. Component Structure
+Decision: Separate FormBuilder and FormField components with composables
+
+Rationale: 
+- Separation of concerns
+- Reusability
+- Easier testing and maintenance
+
+Trade-off: More files, but significantly better organization and maintainability.
+
+5. Styling Approach
+Decision: Centralized CSS in assets folder (no scoped styles)
+
+Rationale: 
+- All styles in one place for easier maintenance
+- Cleaner component files
+- No external framework dependency
+
+Trade-off: More manual styling, but full control and smaller bundle size.
+
+6. TypeScript Integration
+Decision: Use TypeScript for composables and type definitions
+
+Rationale: Type safety, better IDE support, catch errors at compile time, self-documenting code.
+
+Trade-off: Slightly more verbose, but significantly better developer experience.
+
+KEY DESIGN DECISIONS
+
+1. Composable Pattern: Extracted business logic to composables for reusability and testability
+2. Validation Timing: Blur-based validation prevents annoying errors while typing
+3. Type Safety: TypeScript ensures schema and data structure correctness
+4. Centralized Styles: All CSS in one file for easier maintenance
+5. Progressive Enhancement: Started simple, iteratively improved architecture
