@@ -91,9 +91,9 @@ const handleFieldUpdate = (key, value) => {
   const field = fields.value.find(f => f.key === key)
   if (!field) return
   
-  if (shouldShowErrors(key) && errors.value[key] && shouldShowField(field)) {
-    const fieldErrors = validateField(field, value, isFieldRequired)
-    setFieldErrors(key, fieldErrors)
+  // Clear errors when user starts typing (errors will be re-validated on blur)
+  if (errors.value[key]) {
+    clearFieldErrors(key)
   }
   
   const sourceData = field?.['x-source']?.data
