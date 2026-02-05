@@ -91,7 +91,6 @@ const handleFieldUpdate = (key, value) => {
   const field = fields.value.find(f => f.key === key)
   if (!field) return
   
-  // Clear errors when user starts typing (errors will be re-validated on blur)
   if (errors.value[key]) {
     clearFieldErrors(key)
   }
