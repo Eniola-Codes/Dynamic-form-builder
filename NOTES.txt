@@ -8,9 +8,11 @@ Architecture
   - useFormValidation: Handles all validation rules
   - useConditionalLogic: Manages conditional field visibility and requirements
 2. Component structure: 
+  - SchemaInput.vue: Handles user schema input (file upload or JSON paste) and validation
   - FormBuilder.vue: Coordinates form logic and updates
   - FormField.vue: Renders individual field types and handles field-specific logic
 3. TypeScript: Used for type safety in composables and type definitions
+4. User-provided schemas: No hardcoded schemas - users must provide their own via upload or paste
 
 State Management
 - Vue 3 Composition API with reactive refs
@@ -62,16 +64,25 @@ Rationale:
 Trade-off: More files, but significantly better organization and maintainability.
 
 5. Styling Approach
-Decision: Centralized CSS in assets folder (no scoped styles)
+Decision: Centralized CSS in assets/css/main.css (all styles in single file, no component-level styles)
 
 Rationale: 
-- All styles in one place for easier maintenance
-- Cleaner component files
+- All styles consolidated in one location (assets/css/main.css) for easier maintenance
+- No scoped styles or component-level stylesheets
+- Cleaner component files (no <style> blocks)
+- Global styles ensure consistent base styling
 - No external framework dependency
 
-Trade-off: More manual styling, but full control and smaller bundle size.
+Trade-off: More manual styling, but full control, smaller bundle size, and easier global style management.
 
-6. TypeScript Integration
+6. Schema Input Approach
+Decision: Users must provide their own schema via file upload or JSON paste (no sample/predefined schemas)
+
+Rationale: Makes the form builder truly dynamic and flexible. Users can use any schema format. No hardcoded dependencies.
+
+Trade-off: Users need to provide their own schema, but this makes the tool more versatile and reusable.
+
+7. TypeScript Integration
 Decision: Use TypeScript for composables and type definitions
 
 Rationale: Type safety, better IDE support, catch errors at compile time, self-documenting code.
@@ -80,8 +91,9 @@ Trade-off: Slightly more verbose, but significantly better developer experience.
 
 KEY DESIGN DECISIONS
 
-1. Composable Pattern: Extracted business logic to composables for reusability and testability
-2. Validation Timing: Blur-based validation prevents annoying errors while typing
-3. Type Safety: TypeScript ensures schema and data structure correctness
-4. Centralized Styles: All CSS in one file for easier maintenance
-5. Progressive Enhancement: Started simple, iteratively improved architecture
+1. User-Provided Schemas: No hardcoded schemas - users must provide their own via file upload or JSON paste
+2. Composable Pattern: Extracted business logic to composables for reusability and testability
+3. Validation Timing: Blur-based validation prevents annoying errors while typing
+4. Type Safety: TypeScript ensures schema and data structure correctness
+5. Centralized Styles: All CSS in one file (main.css) for easier maintenance and global consistency
+6. Progressive Enhancement: Started simple, iteratively improved architecture

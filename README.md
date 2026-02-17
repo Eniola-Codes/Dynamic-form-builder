@@ -4,6 +4,7 @@ A dynamic form builder built with Nuxt.js that accepts a JSON schema and renders
 
 ## Features
 
+- ✅ **Schema Input**: Upload a JSON file or paste your schema directly into the application
 - ✅ **Dynamic Field Rendering**: Parses JSON schema and renders form fields automatically
 - ✅ **Field Ordering**: Respects `x-order` property to display fields in the correct sequence
 - ✅ **Multiple Field Types**: Supports text, tel, number, date, file upload, and dropdown/select fields
@@ -42,6 +43,10 @@ A dynamic form builder built with Nuxt.js that accepts a JSON schema and renders
 3. **Open your browser**:
    Navigate to `http://localhost:3000`
 
+4. **Provide your schema**:
+   - Upload a JSON file containing your schema, OR
+   - Paste your JSON schema into the text area
+
 ### Build for Production
 
 ```bash
@@ -60,7 +65,8 @@ npm run preview
 dynamic-form-builder/
 ├── components/
 │   ├── FormBuilder.vue      # Main form builder component
-│   └── FormField.vue         # Individual field renderer
+│   ├── FormField.vue         # Individual field renderer
+│   └── SchemaInput.vue       # Schema input component (file upload & paste)
 ├── composables/
 │   ├── useFormState.ts       # Form state management
 │   ├── useFormValidation.ts  # Validation logic
@@ -69,8 +75,6 @@ dynamic-form-builder/
 │   └── form.ts               # TypeScript type definitions
 ├── pages/
 │   └── index.vue            # Main page displaying the form
-├── data/
-│   └── schema.json          # JSON schema definition
 ├── assets/
 │   └── css/
 │       └── main.css         # Global styles
@@ -80,6 +84,16 @@ dynamic-form-builder/
 ```
 
 ## How It Works
+
+### Getting Started
+
+1. **Provide Your Schema**: When you first open the application, you'll see a schema input interface where you can:
+   - **Upload a JSON file**: Click "Upload JSON File" and select your schema file
+   - **Paste JSON**: Type or paste your JSON schema directly into the text area
+
+2. **Generate Form**: Once you've provided a valid schema, click "Generate Form" to create the dynamic form
+
+3. **Fill and Submit**: Fill out the generated form and submit to see the results
 
 ### Schema Structure
 
@@ -173,20 +187,25 @@ Dropdowns can have options that depend on another field:
 
 ### Component Architecture
 
-The solution uses a composable-based architecture with two main components:
+The solution uses a composable-based architecture with three main components:
 
-1. **FormBuilder.vue**: 
+1. **SchemaInput.vue**: 
+   - Handles user schema input (file upload or JSON paste)
+   - Validates JSON schema structure
+   - Emits validated schema to parent component
+
+2. **FormBuilder.vue**: 
    - Parses the JSON schema
    - Orchestrates form state, validation, and conditional logic
    - Coordinates field updates
    - Uses composables for business logic
 
-2. **FormField.vue**:
+3. **FormField.vue**:
    - Renders individual field types
    - Handles field-specific logic (e.g., dependent dropdowns)
    - Displays validation errors
 
-3. **Composables** (business logic layer):
+4. **Composables** (business logic layer):
    - `useFormState.ts`: Manages form data, errors, and touched fields
    - `useFormValidation.ts`: Handles all validation rules
    - `useConditionalLogic.ts`: Manages conditional field visibility and requirements
@@ -259,17 +278,30 @@ The solution uses a composable-based architecture with two main components:
 
 ### 5. Styling Approach
 
-**Decision**: Centralized CSS in assets folder with global styles.
+**Decision**: Centralized CSS in `assets/css/main.css` with all styles in a single file.
 
 **Rationale**: 
-- All styles in one place (`assets/css/main.css`) for easier maintenance
-- Global styles ensure consistent base styling
+- All styles consolidated in one location (`assets/css/main.css`) for easier maintenance
+- No scoped styles or component-level stylesheets
+- Global styles ensure consistent base styling across all components
 - No external CSS framework dependency keeps bundle size small
-- Cleaner component files (no `<style>` blocks)
+- Cleaner component files (no `<style>` blocks in components)
 
-**Trade-off**: More manual styling, but full control, smaller bundle, and better organization.
+**Trade-off**: More manual styling, but full control, smaller bundle, better organization, and easier global style management.
 
-### 6. TypeScript Integration
+### 6. Schema Input Approach
+
+**Decision**: Users must provide their own schema via file upload or JSON paste (no sample/predefined schemas).
+
+**Rationale**:
+- Makes the form builder truly dynamic and flexible
+- Users can use any schema format that follows the expected structure
+- No hardcoded dependencies on specific schema files
+- Cleaner codebase without sample data files
+
+**Trade-off**: Users need to provide their own schema, but this makes the tool more versatile and reusable.
+
+### 7. TypeScript Integration
 
 **Decision**: Use TypeScript for composables and type definitions.
 
@@ -285,18 +317,24 @@ The solution uses a composable-based architecture with two main components:
 
 To test the form:
 
-1. Fill out required fields
-2. Test conditional logic:
-   - Select "Leased" for Vehicle Purchase Type → Lease Agreement fields appear
-   - Select "Owned" for Vehicle Purchase Type → Proof of Ownership field appears
-   - Select "Yes" for NIN → NIN field becomes required
-3. Test dependent dropdowns:
-   - Select a Vehicle Make → Vehicle Model options update
-4. Test validations:
-   - Try submitting with empty required fields
-   - Enter invalid email or phone number
-   - Enter date of birth that makes you under 18
-   - Enter NIN with wrong format
+1. **Schema Input**:
+   - Upload a valid JSON schema file
+   - Paste a JSON schema into the text area
+   - Test with invalid JSON to see error handling
+   - Test with schema missing `properties` to see validation
+
+2. **Form Generation**:
+   - Generate form from valid schema
+   - Test "Change Schema" button to reset and load new schema
+
+3. **Form Functionality**:
+   - Fill out required fields
+   - Test conditional logic (if your schema includes it)
+   - Test dependent dropdowns (if your schema includes them)
+   - Test validations:
+     - Try submitting with empty required fields
+     - Enter invalid patterns or formats
+     - Test date constraints if applicable
 
 ## License
 
